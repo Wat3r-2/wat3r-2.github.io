@@ -3,170 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHOMINHYUNG</title>
+    <title>CHOMINHYUNG | Archive</title>
     <style>
+        /* 기본 초기화 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background-color: #ffffff;
-            color: #000000;
-            font-family: -apple-system, sans-serif;
-            padding: 2rem;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            letter-spacing: 0.1em;
-            margin-bottom: 4rem;
-        }
-        main { flex: 1; margin-bottom: 6rem; }
-        
-        /* 탭 기본 숨김/노출 */
-        .section { display: none; }
-        .section.active { display: block; }
-
-        /* 대담한 타이포그래피 (레퍼런스 반영) */
-        .hero-title {
-            font-size: clamp(2.5rem, 8vw, 6rem);
-            font-weight: 900;
-            line-height: 0.9;
-            text-transform: uppercase;
-            margin-bottom: 3rem;
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif; 
+            background-color: #ffffff; 
+            color: #000000; 
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
         
-        /* 가로 스크롤 컨테이너 */
-        .work-container {
-            display: flex;
-            gap: 1.5rem;
-            overflow-x: auto;
-            padding-bottom: 1.5rem;
-        }
-        .work-card {
-            flex: 0 0 350px;
-            border: 1px solid #000000;
-            padding: 1rem;
-            height: 450px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            background: #fafafa;
-        }
-        .card-img {
-            width: 100%;
-            height: 280px;
-            background-size: cover;
-            background-position: center;
-            background-color: #eee;
+        /* 상단 헤더 */
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 1.5rem 2rem; 
+            font-size: 0.85rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.05em; 
+            border-bottom: 2px solid #000;
         }
         
-        /* 연락처 거대 링크 */
-        .contact-links { display: flex; flex-direction: column; gap: 1rem; }
-        .contact-links a {
-            font-size: clamp(2rem, 8vw, 5rem);
-            font-weight: 800;
-            color: #000000;
-            text-decoration: none;
+        /* 메인 콘텐츠 영역 */
+        .content-area { padding: 4rem 2rem 8rem 2rem; }
+        
+        /* 탭 시스템 */
+        .tab-content { display: none; animation: fadeIn 0.4s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* 대형 타이포그래피 */
+        .massive-text { 
+            font-size: clamp(3rem, 10vw, 8rem); 
+            font-weight: 900; 
+            line-height: 0.85; 
+            text-transform: uppercase; 
+            letter-spacing: -0.03em; 
+            margin-bottom: 2.5rem; 
         }
-
-        /* 하단 탭 바 */
-        nav {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #ffffff;
-            border: 1px solid #000000;
-            padding: 0.75rem 2rem;
-            display: flex;
-            gap: 2rem;
+        .description { 
+            font-size: 1.1rem; 
+            line-height: 1.6; 
+            max-width: 500px; 
+            margin-bottom: 4rem; 
         }
-        nav button {
-            background: none;
-            border: none;
-            font-size: 0.85rem;
+        
+        /* 포트폴리오 가로 스크롤 (레퍼런스 적용) */
+        .gallery-wrap { 
+            border-top: 2px solid #000; 
+            border-bottom: 2px solid #000; 
+            padding: 2rem 0; 
+            overflow-x: auto; 
+            display: flex; 
+            gap: 2rem; 
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch; 
+        }
+        .gallery-wrap::-webkit-scrollbar { height: 6px; }
+        .gallery-wrap::-webkit-scrollbar-thumb { background: #000; }
+        
+        .gallery-item { 
+            display: inline-block; 
+            width: 320px; 
+            vertical-align: top;
+            white-space: normal;
+        }
+        .gallery-image { 
+            width: 100%; 
+            height: 380px; 
+            object-fit: cover; 
+            display: block; 
+            margin-bottom: 1rem; 
+            filter: grayscale(100%); 
+            transition: filter 0.3s ease;
+            background-color: #f4f4f4; /* 이미지 로딩 전 배경 */
+        }
+        .gallery-item:hover .gallery-image { filter: grayscale(0%); }
+        .gallery-caption { 
+            font-size: 0.85rem; 
             font-weight: 600;
-            cursor: pointer;
-            color: #aaa;
+            text-transform: uppercase; 
+            letter-spacing: 0.05em; 
+            border-top: 1px solid #000; 
+            padding-top: 0.5rem; 
         }
-        nav button.active { color: #000; text-decoration: underline; }
-
-        /* 모바일 최적화 */
+        
+        /* Contact 링크 */
+        .contact-list { list-style: none; display: flex; flex-direction: column; gap: 1rem; }
+        .contact-list a { 
+            font-size: clamp(2.5rem, 8vw, 6rem); 
+            font-weight: 800; 
+            color: #000; 
+            text-decoration: none; 
+            text-transform: uppercase;
+            line-height: 1;
+        }
+        .contact-list a:hover { text-decoration: underline; }
+        
+        /* 하단 고정 네비게이션 */
+        .bottom-nav { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            width: 100%; 
+            background: #fff; 
+            border-top: 2px solid #000; 
+            display: flex; 
+            z-index: 100;
+        }
+        .nav-btn { 
+            flex: 1; 
+            padding: 1.5rem 0; 
+            background: transparent; 
+            border: none; 
+            border-right: 2px solid #000; 
+            font-size: 1rem; 
+            font-weight: bold;
+            text-transform: uppercase; 
+            cursor: pointer; 
+        }
+        .nav-btn:last-child { border-right: none; }
+        .nav-btn.active { background: #000; color: #fff; }
+        
+        /* 모바일 대응 */
         @media (max-width: 768px) {
-            .work-container { flex-direction: column; }
-            .work-card { flex: 1 0 auto; width: 100%; }
+            .header { padding: 1rem; flex-direction: column; gap: 0.5rem; }
+            .header div { text-align: left !important; }
+            .content-area { padding: 2rem 1rem 8rem 1rem; }
+            .nav-btn { padding: 1rem 0; font-size: 0.85rem; }
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <div>CHOMINHYUNG</div>
-        <div style="text-align: right;">[ARCHIVE]<br>SEOUL, KR</div>
+    <!-- 상단 정보 -->
+    <header class="header">
+        <div>조민형<br>CHOMINHYUNG</div>
+        <div style="text-align: right;">FILM DIRECTOR<br>SEOUL, KR</div>
     </header>
 
-    <main>
-        <!-- HOME -->
-        <section id="home" class="section active">
-            <h1 class="hero-title">Artistic<br>Authenticity</h1>
-            <div class="work-container">
-                <div class="work-card">
-                    <div>[01 / FILM]</div>
-                    <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=600&auto=format&fit=crop')"></div>
-                    <div style="font-weight:bold;">슬픔의 승화 (Sublimation)</div>
+    <main class="content-area">
+        
+        <!-- ================= 1. HOME ================= -->
+        <section id="home" class="tab-content active">
+            <h1 class="massive-text">Artistic<br>Authenticity</h1>
+            <p class="description">
+                1인 멀티 구조의 창작을 지향합니다. 미니멀한 톤과 실험적 영상을 통해 내면의 감정을 아트로 전환하는 작업을 이어가고 있습니다.
+            </p>
+            
+            <div class="gallery-wrap">
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&q=80" alt="Short Film" class="gallery-image">
+                    <div class="gallery-caption">01 / Short Film - Sublimation</div>
                 </div>
-                <div class="work-card">
-                    <div>[02 / AD]</div>
-                    <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=600&auto=format&fit=crop')"></div>
-                    <div style="font-weight:bold;">브랜드 필름 '내러티브' (조연출)</div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=600&q=80" alt="Commercial" class="gallery-image">
+                    <div class="gallery-caption">02 / Commercial Film</div>
                 </div>
-            </div>
-        </section>
-
-        <!-- WORK -->
-        <section id="work" class="section">
-            <h1 class="hero-title">Selected<br>Archive</h1>
-            <div class="work-container">
-                <div class="work-card">
-                    <div>[03 / AUDIO]</div>
-                    <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&auto=format&fit=crop')"></div>
-                    <div style="font-weight:bold;">Logic Pro Sound Track</div>
-                </div>
-                <div class="work-card">
-                    <div>[04 / 3D]</div>
-                    <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=600&auto=format&fit=crop')"></div>
-                    <div style="font-weight:bold;">Blender 3D VFX 실험작</div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1512138664757-360e0aac5132?w=600&q=80" alt="Documentary" class="gallery-image">
+                    <div class="gallery-caption">03 / Documentary</div>
                 </div>
             </div>
         </section>
 
-        <!-- CONTACT -->
-        <section id="contact" class="section">
-            <h1 class="hero-title">Connect</h1>
-            <div class="contact-links">
-                <a href="mailto:your-email@gmail.com">EMAIL</a>
-                <a href="https://behance.net" target="_blank">BEHANCE</a>
-                <a href="https://are.na" target="_blank">ARE.NA</a>
+        <!-- ================= 2. WORK ================= -->
+        <section id="work" class="tab-content">
+            <h1 class="massive-text">Selected<br>Archive</h1>
+            <p class="description">
+                저예산 독립 영화, 사운드 디자인, 3D 모델링 등 형태에 구애받지 않는 다매체 실험 아카이브입니다.
+            </p>
+            
+            <div class="gallery-wrap">
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&q=80" alt="Audio" class="gallery-image">
+                    <div class="gallery-caption">Logic Pro / Audio Design</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=600&q=80" alt="3D" class="gallery-image">
+                    <div class="gallery-caption">Blender / 3D Art</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1516961642265-531546e84af2?w=600&q=80" alt="Photography" class="gallery-image">
+                    <div class="gallery-caption">Vintage Photography</div>
+                </div>
             </div>
         </section>
+
+        <!-- ================= 3. CONTACT ================= -->
+        <section id="contact" class="tab-content">
+            <h1 class="massive-text">Connect</h1>
+            <p class="description">영상 기획, 연출, 사운드 디자인 등 진정성 있는 제안을 기다립니다.</p>
+            
+            <ul class="contact-list">
+                <li><a href="mailto:your-email@gmail.com">EMAIL</a></li>
+                <li><a href="https://behance.net" target="_blank">BEHANCE</a></li>
+                <li><a href="https://are.na" target="_blank">ARE.NA</a></li>
+            </ul>
+        </section>
+        
     </main>
 
-    <nav>
-        <button onclick="switchTab('home')" id="btn-home" class="active">Home</button>
-        <button onclick="switchTab('work')" id="btn-work">Work</button>
-        <button onclick="switchTab('contact')" id="btn-contact">Contact</button>
+    <!-- 하단 탭 버튼 -->
+    <nav class="bottom-nav">
+        <button class="nav-btn active" onclick="openTab('home', this)">Home</button>
+        <button class="nav-btn" onclick="openTab('work', this)">Work</button>
+        <button class="nav-btn" onclick="openTab('contact', this)">Contact</button>
     </nav>
 
+    <!-- 탭 전환 스크립트 -->
     <script>
-        function switchTab(tabId) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-
-            document.getElementById(tabId).classList.add('active');
-            document.getElementById('btn-' + tabId).classList.add('active');
-            window.scrollTo({ top: 0 });
+        function openTab(tabName, btnElement) {
+            // 1. 모든 섹션 숨기기
+            var tabContents = document.getElementsByClassName("tab-content");
+            for (var i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+            
+            // 2. 모든 버튼 색상 초기화
+            var navBtns = document.getElementsByClassName("nav-btn");
+            for (var j = 0; j < navBtns.length; j++) {
+                navBtns[j].classList.remove("active");
+            }
+            
+            // 3. 누른 탭과 버튼만 활성화
+            document.getElementById(tabName).classList.add("active");
+            btnElement.classList.add("active");
+            
+            // 4. 화면 맨 위로 이동
+            window.scrollTo(0,0);
         }
     </script>
 </body>
