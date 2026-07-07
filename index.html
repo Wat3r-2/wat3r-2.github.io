@@ -12,7 +12,6 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            /* 눈이 편안한 차분한 옐로우/베이지 계열 배경 */
             background-color: #e4e2d3; 
             color: #111;
             font-family: 'Inter', sans-serif;
@@ -21,22 +20,21 @@
             min-height: 100vh;
         }
 
-        /* 좌측 상단 홈 버튼 로고 */
+        /* 1. 홈 버튼 로고 얇게 변경 (font-weight: 300) */
         .home-logo {
             position: fixed;
             top: 2rem;
             left: 2rem;
             font-size: 1.5rem;
-            font-weight: 900;
+            font-weight: 300; 
             color: #111;
             text-decoration: none;
             z-index: 100;
             letter-spacing: -0.03em;
             transition: transform 0.3s;
         }
-        .home-logo:hover { transform: scale(1.05); }
+        .home-logo:hover { transform: scale(1.05); font-weight: 600; }
 
-        /* 우측 상단 네비게이션 */
         .nav-menu {
             position: fixed;
             top: 2.2rem;
@@ -59,7 +57,6 @@
             padding-right: 5px;
         }
 
-        /* HERO SECTION (메인 화면) */
         .hero-section {
             position: relative;
             width: 100%;
@@ -70,7 +67,6 @@
             justify-content: center;
         }
 
-        /* 은은한 중앙 빛 번짐 */
         .glow-orb {
             position: absolute;
             top: 50%; left: 50%;
@@ -94,29 +90,41 @@
         .hero-text p { font-size: 0.85rem; letter-spacing: 0.05em; margin-bottom: 0.5rem; font-weight: 300; }
         .hero-text h1 { font-size: clamp(3.5rem, 8vw, 6rem); font-weight: 900; letter-spacing: -0.05em; margin-bottom: 0.5rem; }
 
-        .floating-char { position: absolute; font-size: 1.2rem; font-weight: 400; z-index: 2; }
+        .floating-char { position: absolute; font-size: 1.2rem; font-weight: 400; z-index: 2; pointer-events: none; }
 
-        /* 딱 5개의 박스가 뱀처럼 움직이는 트랙 */
+        /* 2. 드래그 가능한 무한 슬라이더 래퍼 설정 */
         .snake-wrapper {
             position: absolute;
             bottom: 5%;
             width: 100%;
             height: 400px;
             z-index: 10;
-            overflow: hidden;
-            pointer-events: none; /* 클릭 방해 금지 */
+            overflow-x: auto;
+            overflow-y: hidden;
+            cursor: grab;
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+        .snake-wrapper::-webkit-scrollbar { display: none; /* Chrome, Safari and Opera */ }
+        .snake-wrapper:active { cursor: grabbing; }
+        
+        .snake-track {
+            display: flex;
+            align-items: center;
+            gap: 6vw;
+            height: 100%;
+            width: max-content;
+            padding: 0 5vw;
         }
 
         .snake-box {
-            position: absolute;
+            flex-shrink: 0;
             background-color: #141414;
-            cursor: pointer;
             border-radius: 2px;
-            pointer-events: auto; /* 박스 자체는 클릭/호버 가능 */
-            top: 50%; /* 수직 중앙 기준점 */
+            position: relative;
+            animation: bob 4s ease-in-out infinite alternate;
+            pointer-events: none; /* 드래그 충돌 방지 */
         }
-        
-        /* 박스 호버 기믹 */
         .snake-box::after {
             content: 'VIEW';
             position: absolute;
@@ -124,45 +132,36 @@
             color: #fff; font-size: 0.8rem; letter-spacing: 0.1em;
             opacity: 0; transition: opacity 0.3s;
         }
+        /* 드래그 중이 아닐 때만 클릭/호버 활성화 */
+        .snake-wrapper:not(:active) .snake-box { pointer-events: auto; cursor: pointer; }
         .snake-box:hover::after { opacity: 1; }
         .snake-box:hover { z-index: 30; }
 
-        /* 각기 다른 크기와 형태 (무작위 느낌) */
-        .snake-box:nth-child(1) { width: 280px; height: 160px; margin-top: -80px; }
-        .snake-box:nth-child(2) { width: 200px; height: 240px; margin-top: -120px; }
-        .snake-box:nth-child(3) { width: 320px; height: 140px; margin-top: -70px; }
-        .snake-box:nth-child(4) { width: 240px; height: 180px; margin-top: -90px; }
-        .snake-box:nth-child(5) { width: 300px; height: 200px; margin-top: -100px; }
+        /* 5개 박스 사이즈 및 딜레이 설정 (무한 루프를 위해 2세트 반복됨) */
+        .snake-box:nth-child(5n+1) { width: 280px; height: 160px; margin-top: -80px; animation-delay: 0s; }
+        .snake-box:nth-child(5n+2) { width: 200px; height: 240px; margin-top: -120px; animation-delay: -0.8s; }
+        .snake-box:nth-child(5n+3) { width: 320px; height: 140px; margin-top: -70px; animation-delay: -1.6s; }
+        .snake-box:nth-child(5n+4) { width: 240px; height: 180px; margin-top: -90px; animation-delay: -2.4s; }
+        .snake-box:nth-child(5n+5) { width: 300px; height: 200px; margin-top: -100px; animation-delay: -3.2s; }
 
-        /* 애니메이션 정의: 수평 이동(slither) + 수직 웨이브(bob) */
-        @keyframes slither {
-            0% { left: 100vw; }
-            100% { left: -400px; } /* 화면 왼쪽으로 완전히 빠져나가도록 */
-        }
+        /* 뱀처럼 위아래로 꿈틀거리는 애니메이션 */
         @keyframes bob {
             0% { transform: translateY(-70px); }
             100% { transform: translateY(70px); }
         }
-
-        /* 5개의 박스가 일정한 간격으로 이어지도록 '음수(-) 딜레이' 적용 
-           - 음수 딜레이를 주면 새로고침하자마자 박스들이 이미 화면 곳곳에 퍼진 상태로 시작합니다!
-        */
-        .snake-box:nth-child(1) { animation: slither 35s linear infinite -0s, bob 4s ease-in-out infinite alternate -0s; }
-        .snake-box:nth-child(2) { animation: slither 35s linear infinite -7s, bob 4s ease-in-out infinite alternate -0.8s; }
-        .snake-box:nth-child(3) { animation: slither 35s linear infinite -14s, bob 4s ease-in-out infinite alternate -1.6s; }
-        .snake-box:nth-child(4) { animation: slither 35s linear infinite -21s, bob 4s ease-in-out infinite alternate -2.4s; }
-        .snake-box:nth-child(5) { animation: slither 35s linear infinite -28s, bob 4s ease-in-out infinite alternate -3.2s; }
 
         /* 모바일 대응 */
         @media (max-width: 768px) {
             .home-logo { top: 1.5rem; left: 1.5rem; }
             .nav-menu { top: 1.5rem; right: 1.5rem; }
             .hero-text { top: 35%; }
-            .snake-box:nth-child(1) { width: 200px; height: 120px; margin-top:-60px; }
-            .snake-box:nth-child(2) { width: 140px; height: 180px; margin-top:-90px; }
-            .snake-box:nth-child(3) { width: 220px; height: 110px; margin-top:-55px; }
-            .snake-box:nth-child(4) { width: 180px; height: 130px; margin-top:-65px; }
-            .snake-box:nth-child(5) { width: 210px; height: 150px; margin-top:-75px; }
+            
+            .snake-wrapper { height: 250px; bottom: 10%; }
+            .snake-box:nth-child(5n+1) { width: 200px; height: 120px; margin-top:-60px; }
+            .snake-box:nth-child(5n+2) { width: 140px; height: 180px; margin-top:-90px; }
+            .snake-box:nth-child(5n+3) { width: 220px; height: 110px; margin-top:-55px; }
+            .snake-box:nth-child(5n+4) { width: 180px; height: 130px; margin-top:-65px; }
+            .snake-box:nth-child(5n+5) { width: 210px; height: 150px; margin-top:-75px; }
         }
     </style>
 </head>
@@ -192,17 +191,24 @@
             <p id="rand-bottom">KINDA ARTISTIC</p>
         </div>
 
-        <div class="snake-wrapper">
-            <div class="snake-box"></div>
-            <div class="snake-box"></div>
-            <div class="snake-box"></div>
-            <div class="snake-box"></div>
-            <div class="snake-box"></div>
+        <div class="snake-wrapper" id="snakeWrapper">
+            <div class="snake-track" id="snakeTrack">
+                <div class="snake-box"></div>
+                <div class="snake-box"></div>
+                <div class="snake-box"></div>
+                <div class="snake-box"></div>
+                <div class="snake-box"></div>
+                <div class="snake-box"></div>
+                <div class="snake-box"></div>
+                <div class="snake-box"></div>
+                <div class="snake-box"></div>
+                <div class="snake-box"></div>
+            </div>
         </div>
     </section>
 
     <script>
-        // 1. 위쪽에 들어갈 문구 리스트 (원하는 대로 추가/수정 가능)
+        // 1. 랜덤 텍스트 설정
         const topSentences = [
             "안녕하세요 저는 조민형입니다",
             "WELCOME TO MY SPACE",
@@ -210,8 +216,6 @@
             "영화감독을 꿈꾸는",
             "예술적 진정성을 담은 아카이브"
         ];
-
-        // 2. 아래쪽에 들어갈 문구 리스트
         const bottomSentences = [
             "좋은 아침입니다",
             "KINDA ARTISTIC",
@@ -220,14 +224,65 @@
             "HAVE A GOOD DAY"
         ];
 
-        // 3. 페이지 로드 시 랜덤하게 하나씩 골라서 HTML에 꽂아줌
         window.onload = function() {
-            const randomTop = topSentences[Math.floor(Math.random() * topSentences.length)];
-            const randomBottom = bottomSentences[Math.floor(Math.random() * bottomSentences.length)];
-            
-            document.getElementById('rand-top').innerText = randomTop;
-            document.getElementById('rand-bottom').innerText = randomBottom;
+            document.getElementById('rand-top').innerText = topSentences[Math.floor(Math.random() * topSentences.length)];
+            document.getElementById('rand-bottom').innerText = bottomSentences[Math.floor(Math.random() * bottomSentences.length)];
         }
+
+        // 2. 무한 슬라이더 및 드래그 로직
+        const wrapper = document.getElementById('snakeWrapper');
+        const track = document.getElementById('snakeTrack');
+        
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+        let animationId;
+        let autoScrollSpeed = 0.8; // 천천히 흘러가는 속도
+
+        function autoScroll() {
+            if(!isDown) {
+                wrapper.scrollLeft += autoScrollSpeed;
+                
+                // 트랙의 절반(원본 5개 길이)을 넘어가면 부드럽게 처음으로 리셋 (무한 뱀 효과)
+                if (wrapper.scrollLeft >= (track.scrollWidth / 2)) {
+                    wrapper.scrollLeft = 0;
+                }
+            }
+            animationId = requestAnimationFrame(autoScroll);
+        }
+        
+        // 자동 스크롤 시작
+        autoScroll();
+
+        // [PC 마우스 드래그]
+        wrapper.addEventListener('mousedown', (e) => {
+            isDown = true;
+            startX = e.pageX - wrapper.offsetLeft;
+            scrollLeft = wrapper.scrollLeft;
+        });
+        wrapper.addEventListener('mouseleave', () => { isDown = false; });
+        wrapper.addEventListener('mouseup', () => { isDown = false; });
+        wrapper.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - wrapper.offsetLeft;
+            const walk = (x - startX) * 1.5; // 드래그 민감도
+            wrapper.scrollLeft = scrollLeft - walk;
+        });
+
+        // [모바일 터치 스와이프]
+        wrapper.addEventListener('touchstart', (e) => {
+            isDown = true;
+            startX = e.touches[0].pageX - wrapper.offsetLeft;
+            scrollLeft = wrapper.scrollLeft;
+        });
+        wrapper.addEventListener('touchend', () => { isDown = false; });
+        wrapper.addEventListener('touchmove', (e) => {
+            if (!isDown) return;
+            const x = e.touches[0].pageX - wrapper.offsetLeft;
+            const walk = (x - startX) * 1.5;
+            wrapper.scrollLeft = scrollLeft - walk;
+        });
     </script>
 </body>
 </html>
