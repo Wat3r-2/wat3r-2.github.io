@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>*Wat3r! | Archive</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: #e4e2d3; /* 메인과 동일한 눈 편안한 옐로우/베이지 */
+            color: #111;
+            font-family: 'Inter', sans-serif;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        /* 네비게이션 공통 */
+        .nav-menu {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            list-style: none;
+            z-index: 100;
+            text-align: right;
+        }
+        .nav-menu li { margin-bottom: 0.4rem; }
+        .nav-menu a {
+            text-decoration: none;
+            color: #111;
+            font-size: 0.85rem;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+        }
+        .nav-menu a:hover { font-weight: 800; padding-right: 5px; }
+
+        /* 서브 페이지 콘텐츠 영역 */
+        .content-wrap {
+            margin-top: 10rem;
+            max-width: 1000px;
+            padding-bottom: 5rem;
+        }
+        .page-title {
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -0.03em;
+            margin-bottom: 2rem;
+        }
+        .page-desc {
+            font-size: 1.1rem;
+            font-weight: 300;
+            line-height: 1.6;
+            max-width: 600px;
+        }
+    </style>
+</head>
+<body>
+
+    <ul class="nav-menu">
+        <li><a href="index.html">*home</a></li>
+        <li><a href="about.html">*about</a></li>
+        <li><a href="film.html">*film</a></li>
+        <li><a href="photo.html">*photo</a></li>
+        <li><a href="trial.html">*trial</a></li>
+        <li><a href="etc.html">*etc</a></li>
+        <li><a href="contact.html">*contact</a></li>
+    </ul>
+
+    <main class="content-wrap">
+        <h1 class="page-title">Page Title</h1> <p class="page-desc">
+            이곳에 해당 카테고리에 맞는 작업물이나 텍스트를 나열하게 됩니다.
+        </p>
+    </main>
+
+</body>
+</html>
