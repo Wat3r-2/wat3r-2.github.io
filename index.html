@@ -10,30 +10,31 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
     
     <style>
+        /* 기본 리셋 및 부드러운 스크롤 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         body {
             background-color: #e4e2d3; 
             color: #111;
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
             position: relative;
-            min-height: 100vh;
         }
 
-        /* 1. 홈 버튼 로고 얇게 변경 (font-weight: 300) */
+        /* --- 1. 네비게이션 & 로고 --- */
         .home-logo {
             position: fixed;
             top: 2rem;
             left: 2rem;
             font-size: 1.5rem;
-            font-weight: 300; 
+            font-weight: 300; /* 얇은 글씨체 */
             color: #111;
             text-decoration: none;
             z-index: 100;
             letter-spacing: -0.03em;
-            transition: transform 0.3s;
+            transition: font-weight 0.3s;
         }
-        .home-logo:hover { transform: scale(1.05); font-weight: 600; }
+        .home-logo:hover { font-weight: 600; }
 
         .nav-menu {
             position: fixed;
@@ -52,16 +53,13 @@
             letter-spacing: 0.05em;
             transition: all 0.3s ease;
         }
-        .nav-menu a:hover {
-            font-weight: 800;
-            padding-right: 5px;
-        }
+        .nav-menu a:hover { font-weight: 800; padding-right: 5px; }
 
+        /* --- 2. 메인 HERO 섹션 (박스가 안 보이게 100vh 꽉 채움) --- */
         .hero-section {
             position: relative;
             width: 100%;
-            height: 100vh;
-            overflow: hidden;
+            height: 100vh; /* 화면에 딱 맞게 */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -80,7 +78,7 @@
 
         .hero-text {
             position: absolute;
-            top: 40%;
+            top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
@@ -92,29 +90,27 @@
 
         .floating-char { position: absolute; font-size: 1.2rem; font-weight: 400; z-index: 2; pointer-events: none; }
 
-        /* 2. 드래그 가능한 무한 슬라이더 래퍼 설정 */
-        .snake-wrapper {
-            position: absolute;
-            bottom: 5%;
+        /* --- 3. 슬라이더 섹션 (스크롤 해야 보임) --- */
+        .slider-section {
+            position: relative;
             width: 100%;
-            height: 400px;
+            padding: 10vh 0 15vh 0; /* 위아래 여백을 주어 살짝 내렸을 때 보이게 함 */
+            overflow: hidden;
             z-index: 10;
-            overflow-x: auto;
-            overflow-y: hidden;
-            cursor: grab;
-            -ms-overflow-style: none; /* IE and Edge */
-            scrollbar-width: none; /* Firefox */
         }
-        .snake-wrapper::-webkit-scrollbar { display: none; /* Chrome, Safari and Opera */ }
+
+        .snake-wrapper {
+            width: 100%;
+            cursor: grab;
+        }
         .snake-wrapper:active { cursor: grabbing; }
         
         .snake-track {
             display: flex;
             align-items: center;
-            gap: 6vw;
-            height: 100%;
             width: max-content;
-            padding: 0 5vw;
+            padding-left: 5vw; /* 시작 여백 */
+            /* JS로 부드럽게 TranslateX 이동 */
         }
 
         .snake-box {
@@ -123,8 +119,10 @@
             border-radius: 2px;
             position: relative;
             animation: bob 4s ease-in-out infinite alternate;
-            pointer-events: none; /* 드래그 충돌 방지 */
+            margin-right: 6vw; /* 박스 사이 간격 */
+            pointer-events: auto;
         }
+        
         .snake-box::after {
             content: 'VIEW';
             position: absolute;
@@ -132,36 +130,77 @@
             color: #fff; font-size: 0.8rem; letter-spacing: 0.1em;
             opacity: 0; transition: opacity 0.3s;
         }
-        /* 드래그 중이 아닐 때만 클릭/호버 활성화 */
-        .snake-wrapper:not(:active) .snake-box { pointer-events: auto; cursor: pointer; }
         .snake-box:hover::after { opacity: 1; }
         .snake-box:hover { z-index: 30; }
 
-        /* 5개 박스 사이즈 및 딜레이 설정 (무한 루프를 위해 2세트 반복됨) */
+        /* 5개 박스 사이즈 및 딜레이 설정 */
         .snake-box:nth-child(5n+1) { width: 280px; height: 160px; margin-top: -80px; animation-delay: 0s; }
         .snake-box:nth-child(5n+2) { width: 200px; height: 240px; margin-top: -120px; animation-delay: -0.8s; }
         .snake-box:nth-child(5n+3) { width: 320px; height: 140px; margin-top: -70px; animation-delay: -1.6s; }
         .snake-box:nth-child(5n+4) { width: 240px; height: 180px; margin-top: -90px; animation-delay: -2.4s; }
         .snake-box:nth-child(5n+5) { width: 300px; height: 200px; margin-top: -100px; animation-delay: -3.2s; }
 
-        /* 뱀처럼 위아래로 꿈틀거리는 애니메이션 */
         @keyframes bob {
             0% { transform: translateY(-70px); }
             100% { transform: translateY(70px); }
+        }
+
+        /* --- 4. 기린 편집 디자인 섹션 --- */
+        .editorial-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 5rem 2rem 15rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* shape-outside를 이용해 기린 형태에 맞춰 텍스트가 비켜가도록 설정 */
+        .giraffe-wrap {
+            float: right;
+            width: clamp(300px, 40vw, 500px);
+            height: clamp(600px, 80vw, 900px);
+            margin-left: 3rem;
+            margin-bottom: 2rem;
+            /* 기린의 목선 형태를 대략적으로 딴 폴리곤 형태 (텍스트가 이 선을 따라 흐름) */
+            shape-outside: polygon(100% 0, 70% 0, 60% 20%, 55% 40%, 40% 60%, 35% 100%, 100% 100%);
+            /* 실제 이미지 업로드 (추후 배경이 투명한 PNG로 교체하면 더욱 완벽합니다) */
+            background-image: url('nray91-giraffe-7708387 1.jpg');
+            background-size: cover;
+            background-position: center;
+            border-radius: 4px;
+        }
+
+        .editorial-text {
+            font-size: 1.15rem;
+            line-height: 1.9;
+            font-weight: 300;
+            color: #333;
+            text-align: justify;
+            word-break: keep-all;
+        }
+        
+        .editorial-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -0.05em;
+            margin-bottom: 2rem;
+            margin-top: 5rem;
+            line-height: 1;
         }
 
         /* 모바일 대응 */
         @media (max-width: 768px) {
             .home-logo { top: 1.5rem; left: 1.5rem; }
             .nav-menu { top: 1.5rem; right: 1.5rem; }
-            .hero-text { top: 35%; }
+            .snake-box:nth-child(5n+1) { width: 200px; height: 120px; }
+            .snake-box:nth-child(5n+2) { width: 140px; height: 180px; }
+            .snake-box:nth-child(5n+3) { width: 220px; height: 110px; }
+            .snake-box:nth-child(5n+4) { width: 180px; height: 130px; }
+            .snake-box:nth-child(5n+5) { width: 210px; height: 150px; }
             
-            .snake-wrapper { height: 250px; bottom: 10%; }
-            .snake-box:nth-child(5n+1) { width: 200px; height: 120px; margin-top:-60px; }
-            .snake-box:nth-child(5n+2) { width: 140px; height: 180px; margin-top:-90px; }
-            .snake-box:nth-child(5n+3) { width: 220px; height: 110px; margin-top:-55px; }
-            .snake-box:nth-child(5n+4) { width: 180px; height: 130px; margin-top:-65px; }
-            .snake-box:nth-child(5n+5) { width: 210px; height: 150px; margin-top:-75px; }
+            .giraffe-wrap { width: 250px; height: 500px; margin-left: 1.5rem; }
+            .editorial-text { font-size: 1rem; }
         }
     </style>
 </head>
@@ -180,24 +219,20 @@
 
     <section class="hero-section">
         <div class="glow-orb"></div>
-
         <div class="floating-char" style="top: 20%; left: 15%; font-weight: 600;">&amp;</div>
         <div class="floating-char" style="top: 25%; right: 25%; font-size: 1.5rem;">~</div>
-        <div class="floating-char" style="top: 60%; left: 20%; font-size: 2.5rem; font-weight: 800;">'hi'</div>
+        <div class="floating-char" style="top: 75%; left: 20%; font-size: 2.5rem; font-weight: 800;">'hi'</div>
 
         <div class="hero-text">
             <p id="rand-top">CHOMINHYUNG</p>
             <h1>*Wat3r!</h1>
             <p id="rand-bottom">KINDA ARTISTIC</p>
         </div>
+    </section>
 
-        <div class="snake-wrapper" id="snakeWrapper">
+    <section class="slider-section">
+        <div class="snake-wrapper">
             <div class="snake-track" id="snakeTrack">
-                <div class="snake-box"></div>
-                <div class="snake-box"></div>
-                <div class="snake-box"></div>
-                <div class="snake-box"></div>
-                <div class="snake-box"></div>
                 <div class="snake-box"></div>
                 <div class="snake-box"></div>
                 <div class="snake-box"></div>
@@ -205,6 +240,17 @@
                 <div class="snake-box"></div>
             </div>
         </div>
+    </section>
+
+    <section class="editorial-section">
+        <div class="giraffe-wrap"></div>
+        
+        <h2 class="editorial-title">Artistic<br>Authenticity</h2>
+        <p class="editorial-text">
+            슬픔과 분노, 날 것의 감정들을 시각적 은유로 전환하는 과정을 탐구합니다. 카메라 렌즈를 통해 바라본 세상은 단순한 기록을 넘어, 무의식 속에 잠재된 서사를 끌어내는 작업입니다. 1인 기반의 멀티 콜렉티브 구조로 영상, 사운드, 3D 매체를 교차 결합(Cross-discipline)하며 고유한 미학을 구축하고 있습니다. <br><br>
+            저예산 독립 프로덕션이 가질 수 있는 거칠지만 섬세한 질감, 빈티지 렌즈를 투과해 맺히는 찰나의 빛, 그리고 Logic Pro와 Blender를 오가며 직조해내는 공감각적 스토리텔링은 결국 하나의 지점으로 수렴합니다. 그것은 상업적 관습에 얽매이지 않고 개인의 진정성이 묻어나는 '진짜 이야기'를 스크린 위에 펼쳐내는 것입니다. <br><br>
+            기린이 높은 곳에서 넓은 초원을 조망하듯, 다매체를 자유롭게 오가며 새로운 시각적 프레임을 제시하고자 합니다. 이곳은 제가 수집한 영감의 파편들이자, 앞으로 구축해 나갈 거대한 서사의 프롤로그입니다. 지속적인 실험과 사유를 통해 공간과 사운드를 빚어내며 감각의 외연을 넓혀가겠습니다.
+        </p>
     </section>
 
     <script>
@@ -229,59 +275,73 @@
             document.getElementById('rand-bottom').innerText = bottomSentences[Math.floor(Math.random() * bottomSentences.length)];
         }
 
-        // 2. 무한 슬라이더 및 드래그 로직
-        const wrapper = document.getElementById('snakeWrapper');
+        // 2. 부드러운 GPU 가속(TranslateX) 무한 드래그 슬라이더
+        const wrapper = document.querySelector('.snake-wrapper');
         const track = document.getElementById('snakeTrack');
         
-        let isDown = false;
-        let startX;
-        let scrollLeft;
-        let animationId;
-        let autoScrollSpeed = 0.8; // 천천히 흘러가는 속도
+        // 박스 5개를 그대로 복제하여 무한 루프 구현
+        track.innerHTML += track.innerHTML;
 
-        function autoScroll() {
-            if(!isDown) {
-                wrapper.scrollLeft += autoScrollSpeed;
-                
-                // 트랙의 절반(원본 5개 길이)을 넘어가면 부드럽게 처음으로 리셋 (무한 뱀 효과)
-                if (wrapper.scrollLeft >= (track.scrollWidth / 2)) {
-                    wrapper.scrollLeft = 0;
-                }
+        let isDown = false;
+        let startX = 0;
+        let currentTranslate = 0;
+        let prevTranslate = 0;
+        let animationId;
+        const autoScrollSpeed = 0.8; 
+
+        function renderSlider() {
+            if (!isDown) {
+                // 드래그 중이 아닐 때만 자동으로 흘러가게
+                currentTranslate -= autoScrollSpeed;
             }
-            animationId = requestAnimationFrame(autoScroll);
+
+            // 트랙 절반 크기를 기준으로 무한 루프 리셋 로직
+            const trackWidth = track.scrollWidth;
+            const halfWidth = trackWidth / 2;
+
+            if (Math.abs(currentTranslate) >= halfWidth) {
+                currentTranslate = 0;
+                prevTranslate = 0;
+            } else if (currentTranslate > 0) {
+                currentTranslate = -halfWidth;
+                prevTranslate = -halfWidth;
+            }
+
+            track.style.transform = `translateX(${currentTranslate}px)`;
+            animationId = requestAnimationFrame(renderSlider);
         }
         
-        // 자동 스크롤 시작
-        autoScroll();
+        // 애니메이션 시작
+        renderSlider();
 
-        // [PC 마우스 드래그]
+        // PC 마우스 드래그 이벤트
         wrapper.addEventListener('mousedown', (e) => {
             isDown = true;
-            startX = e.pageX - wrapper.offsetLeft;
-            scrollLeft = wrapper.scrollLeft;
+            startX = e.pageX;
+            prevTranslate = currentTranslate;
         });
         wrapper.addEventListener('mouseleave', () => { isDown = false; });
         wrapper.addEventListener('mouseup', () => { isDown = false; });
         wrapper.addEventListener('mousemove', (e) => {
             if (!isDown) return;
             e.preventDefault();
-            const x = e.pageX - wrapper.offsetLeft;
+            const x = e.pageX;
             const walk = (x - startX) * 1.5; // 드래그 민감도
-            wrapper.scrollLeft = scrollLeft - walk;
+            currentTranslate = prevTranslate + walk;
         });
 
-        // [모바일 터치 스와이프]
+        // 모바일 터치 이벤트
         wrapper.addEventListener('touchstart', (e) => {
             isDown = true;
-            startX = e.touches[0].pageX - wrapper.offsetLeft;
-            scrollLeft = wrapper.scrollLeft;
+            startX = e.touches[0].pageX;
+            prevTranslate = currentTranslate;
         });
         wrapper.addEventListener('touchend', () => { isDown = false; });
         wrapper.addEventListener('touchmove', (e) => {
             if (!isDown) return;
-            const x = e.touches[0].pageX - wrapper.offsetLeft;
+            const x = e.touches[0].pageX;
             const walk = (x - startX) * 1.5;
-            wrapper.scrollLeft = scrollLeft - walk;
+            currentTranslate = prevTranslate + walk;
         });
     </script>
 </body>
