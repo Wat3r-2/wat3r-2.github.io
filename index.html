@@ -3,238 +3,250 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHOMINHYUNG | Archive</title>
+    <title>*Wat3r! | 조민형</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        /* 기본 초기화 */
+        /* 1. 기본 설정 및 그레인(노이즈) 텍스처 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif; 
-            background-color: #ffffff; 
-            color: #000000; 
+        body {
+            background-color: #dfdcd3; /* 레퍼런스와 유사한 따뜻한 베이지/카키 톤 */
+            color: #111;
+            font-family: 'Syne', 'Noto Sans KR', sans-serif;
             overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            position: relative;
         }
-        
-        /* 상단 헤더 */
-        .header { 
-            display: flex; 
-            justify-content: space-between; 
-            padding: 1.5rem 2rem; 
-            font-size: 0.85rem; 
-            text-transform: uppercase; 
-            letter-spacing: 0.05em; 
-            border-bottom: 2px solid #000;
+
+        /* 필름 그레인 효과 (화면 전체에 깔리는 미세한 노이즈) */
+        .grain-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.6;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            mix-blend-mode: overlay;
         }
-        
-        /* 메인 콘텐츠 영역 */
-        .content-area { padding: 4rem 2rem 8rem 2rem; }
-        
-        /* 탭 시스템 */
-        .tab-content { display: none; animation: fadeIn 0.4s ease; }
-        .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* 대형 타이포그래피 */
-        .massive-text { 
-            font-size: clamp(3rem, 10vw, 8rem); 
-            font-weight: 900; 
-            line-height: 0.85; 
-            text-transform: uppercase; 
-            letter-spacing: -0.03em; 
-            margin-bottom: 2.5rem; 
+
+        /* 2. 중앙의 푸른 빛 번짐 (Glow Orb) */
+        .glow-orb {
+            position: absolute;
+            top: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60vw;
+            height: 60vw;
+            max-width: 600px;
+            max-height: 600px;
+            background: radial-gradient(circle, rgba(144, 194, 231, 0.8) 0%, rgba(223, 220, 211, 0) 70%);
+            border-radius: 50%;
+            z-index: 1;
+            pointer-events: none;
         }
-        .description { 
-            font-size: 1.1rem; 
-            line-height: 1.6; 
-            max-width: 500px; 
-            margin-bottom: 4rem; 
+
+        /* 3. 메인 타이포그래피 및 떠다니는 기호들 */
+        .hero-text {
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 20;
         }
-        
-        /* 포트폴리오 가로 스크롤 (레퍼런스 적용) */
-        .gallery-wrap { 
-            border-top: 2px solid #000; 
-            border-bottom: 2px solid #000; 
-            padding: 2rem 0; 
-            overflow-x: auto; 
-            display: flex; 
-            gap: 2rem; 
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch; 
+        .hero-text p {
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+            font-weight: 300;
         }
-        .gallery-wrap::-webkit-scrollbar { height: 6px; }
-        .gallery-wrap::-webkit-scrollbar-thumb { background: #000; }
-        
-        .gallery-item { 
-            display: inline-block; 
-            width: 320px; 
-            vertical-align: top;
-            white-space: normal;
+        .hero-text h1 {
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            margin-bottom: 0.5rem;
         }
-        .gallery-image { 
-            width: 100%; 
-            height: 380px; 
-            object-fit: cover; 
-            display: block; 
-            margin-bottom: 1rem; 
-            filter: grayscale(100%); 
-            transition: filter 0.3s ease;
-            background-color: #f4f4f4; /* 이미지 로딩 전 배경 */
+
+        .floating-char {
+            position: absolute;
+            font-size: 1.2rem;
+            font-weight: 300;
+            color: #333;
+            z-index: 2;
         }
-        .gallery-item:hover .gallery-image { filter: grayscale(0%); }
-        .gallery-caption { 
-            font-size: 0.85rem; 
-            font-weight: 600;
-            text-transform: uppercase; 
-            letter-spacing: 0.05em; 
-            border-top: 1px solid #000; 
-            padding-top: 0.5rem; 
+
+        /* 4. 우측 상단 네비게이션 메뉴 */
+        .nav-menu {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            list-style: none;
+            z-index: 50;
+            text-align: right;
         }
-        
-        /* Contact 링크 */
-        .contact-list { list-style: none; display: flex; flex-direction: column; gap: 1rem; }
-        .contact-list a { 
-            font-size: clamp(2.5rem, 8vw, 6rem); 
-            font-weight: 800; 
-            color: #000; 
-            text-decoration: none; 
-            text-transform: uppercase;
-            line-height: 1;
+        .nav-menu li {
+            margin-bottom: 0.3rem;
         }
-        .contact-list a:hover { text-decoration: underline; }
-        
-        /* 하단 고정 네비게이션 */
-        .bottom-nav { 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            width: 100%; 
-            background: #fff; 
-            border-top: 2px solid #000; 
-            display: flex; 
-            z-index: 100;
+        .nav-menu a {
+            text-decoration: none;
+            color: #111;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+            transition: color 0.3s, padding-right 0.3s;
         }
-        .nav-btn { 
-            flex: 1; 
-            padding: 1.5rem 0; 
-            background: transparent; 
-            border: none; 
-            border-right: 2px solid #000; 
-            font-size: 1rem; 
+        .nav-menu a:hover {
+            color: #555;
+            padding-right: 5px;
             font-weight: bold;
-            text-transform: uppercase; 
-            cursor: pointer; 
         }
-        .nav-btn:last-child { border-right: none; }
-        .nav-btn.active { background: #000; color: #fff; }
+
+        /* 5. 무한 가로 스크롤 (Marquee 썸네일 박스) */
+        .marquee-section {
+            position: absolute;
+            width: 100vw;
+            overflow: hidden;
+            z-index: 10;
+        }
+        /* 각 줄마다 위치와 속도를 다르게 주어 리듬감을 형성 */
+        .marquee-section.row-1 { top: 35%; }
+        .marquee-section.row-2 { top: 55%; }
+        .marquee-section.row-3 { top: 75%; }
+
+        .marquee-track {
+            display: flex;
+            width: max-content;
+            /* 오른쪽에서 왼쪽으로 흐름 */
+            animation: scroll-left linear infinite;
+        }
+        .row-1 .marquee-track { animation-duration: 35s; }
+        .row-2 .marquee-track { animation-duration: 45s; animation-direction: reverse; } /* 지루하지 않게 하나는 반대로 */
+        .row-3 .marquee-track { animation-duration: 40s; }
+
+        @keyframes scroll-left {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); } /* 절반 이동 후 완벽한 루프 */
+        }
+
+        /* 검은색 썸네일 박스 */
+        .thumbnail-box {
+            width: clamp(200px, 20vw, 350px);
+            height: clamp(120px, 12vw, 200px);
+            background-color: #141414;
+            margin: 0 2rem;
+            cursor: pointer;
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
         
-        /* 모바일 대응 */
+        .thumbnail-box:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        /* 호버 시 텍스트 등장 기믹 */
+        .thumbnail-box::after {
+            content: 'PROJECT_VIEW';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .thumbnail-box:hover::after { opacity: 1; }
+
+        /* 6. 콜라주 아트워크 (동물 및 오브제 이미지) */
+        .collage-img {
+            position: absolute;
+            z-index: 15; /* 썸네일 박스와 텍스트 사이의 뎁스 */
+            pointer-events: none; /* 클릭 방해 금지 */
+            filter: drop-shadow(0 30px 40px rgba(0,0,0,0.15));
+        }
+        
+        /* 나중에 진짜 누끼(배경 투명) PNG를 구하시면 img src만 갈아끼우시면 됩니다 */
+        .img-giraffe {
+            right: 15%;
+            top: 30%;
+            width: clamp(250px, 30vw, 500px);
+            /* 레퍼런스 느낌을 내기 위한 임시 아트워크 필터 */
+            border-radius: 4px;
+            transform: rotate(2deg);
+        }
+        
+        .img-iguana {
+            left: 10%;
+            bottom: -5%;
+            width: clamp(200px, 25vw, 400px);
+            transform: rotate(-3deg);
+            border-radius: 4px;
+        }
+
+        /* 반응형 모바일 최적화 */
         @media (max-width: 768px) {
-            .header { padding: 1rem; flex-direction: column; gap: 0.5rem; }
-            .header div { text-align: left !important; }
-            .content-area { padding: 2rem 1rem 8rem 1rem; }
-            .nav-btn { padding: 1rem 0; font-size: 0.85rem; }
+            .nav-menu { top: 1.5rem; right: 1.5rem; }
+            .thumbnail-box { margin: 0 1rem; }
+            .img-giraffe { right: 5%; top: 40%; }
+            .img-iguana { left: 5%; bottom: 5%; }
+            .marquee-section.row-1 { top: 40%; }
+            .marquee-section.row-2 { top: 60%; }
+            .marquee-section.row-3 { top: 80%; }
         }
     </style>
 </head>
 <body>
 
-    <!-- 상단 정보 -->
-    <header class="header">
-        <div>조민형<br>CHOMINHYUNG</div>
-        <div style="text-align: right;">FILM DIRECTOR<br>SEOUL, KR</div>
-    </header>
+    <div class="grain-overlay"></div>
 
-    <main class="content-area">
-        
-        <!-- ================= 1. HOME ================= -->
-        <section id="home" class="tab-content active">
-            <h1 class="massive-text">Artistic<br>Authenticity</h1>
-            <p class="description">
-                1인 멀티 구조의 창작을 지향합니다. 미니멀한 톤과 실험적 영상을 통해 내면의 감정을 아트로 전환하는 작업을 이어가고 있습니다.
-            </p>
-            
-            <div class="gallery-wrap">
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&q=80" alt="Short Film" class="gallery-image">
-                    <div class="gallery-caption">01 / Short Film - Sublimation</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=600&q=80" alt="Commercial" class="gallery-image">
-                    <div class="gallery-caption">02 / Commercial Film</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1512138664757-360e0aac5132?w=600&q=80" alt="Documentary" class="gallery-image">
-                    <div class="gallery-caption">03 / Documentary</div>
-                </div>
-            </div>
-        </section>
+    <div class="glow-orb"></div>
 
-        <!-- ================= 2. WORK ================= -->
-        <section id="work" class="tab-content">
-            <h1 class="massive-text">Selected<br>Archive</h1>
-            <p class="description">
-                저예산 독립 영화, 사운드 디자인, 3D 모델링 등 형태에 구애받지 않는 다매체 실험 아카이브입니다.
-            </p>
-            
-            <div class="gallery-wrap">
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&q=80" alt="Audio" class="gallery-image">
-                    <div class="gallery-caption">Logic Pro / Audio Design</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=600&q=80" alt="3D" class="gallery-image">
-                    <div class="gallery-caption">Blender / 3D Art</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1516961642265-531546e84af2?w=600&q=80" alt="Photography" class="gallery-image">
-                    <div class="gallery-caption">Vintage Photography</div>
-                </div>
-            </div>
-        </section>
+    <div class="floating-char" style="top: 2rem; left: 2rem; font-size: 0.8rem;">*wat3r!</div>
+    <div class="floating-char" style="top: 15%; left: 25%;">&amp;</div>
+    <div class="floating-char" style="top: 22%; left: 30%; font-size: 0.9rem;">^</div>
+    <div class="floating-char" style="top: 25%; right: 35%; font-size: 1.5rem;">~</div>
+    <div class="floating-char" style="top: 35%; right: 25%; font-size: 1.2rem;">#</div>
+    <div class="floating-char" style="top: 65%; left: 30%; font-size: 2.5rem; font-family: 'Syne', sans-serif;">'hi'</div>
 
-        <!-- ================= 3. CONTACT ================= -->
-        <section id="contact" class="tab-content">
-            <h1 class="massive-text">Connect</h1>
-            <p class="description">영상 기획, 연출, 사운드 디자인 등 진정성 있는 제안을 기다립니다.</p>
-            
-            <ul class="contact-list">
-                <li><a href="mailto:your-email@gmail.com">EMAIL</a></li>
-                <li><a href="https://behance.net" target="_blank">BEHANCE</a></li>
-                <li><a href="https://are.na" target="_blank">ARE.NA</a></li>
-            </ul>
-        </section>
-        
-    </main>
+    <ul class="nav-menu">
+        <li><a href="#about">*about</a></li>
+        <li><a href="#film">*film</a></li>
+        <li><a href="#photo">*photo</a></li>
+        <li><a href="#trial">*trial</a></li>
+        <li><a href="#etc">*etc</a></li>
+        <li><a href="#contact">*contact</a></li>
+    </ul>
 
-    <!-- 하단 탭 버튼 -->
-    <nav class="bottom-nav">
-        <button class="nav-btn active" onclick="openTab('home', this)">Home</button>
-        <button class="nav-btn" onclick="openTab('work', this)">Work</button>
-        <button class="nav-btn" onclick="openTab('contact', this)">Contact</button>
-    </nav>
+    <div class="hero-text">
+        <p>안녕하세요 저는 조민형입니다</p>
+        <h1>*Wat3r!</h1>
+        <p>좋은 아침입니다</p>
+    </div>
 
-    <!-- 탭 전환 스크립트 -->
-    <script>
-        function openTab(tabName, btnElement) {
-            // 1. 모든 섹션 숨기기
-            var tabContents = document.getElementsByClassName("tab-content");
-            for (var i = 0; i < tabContents.length; i++) {
-                tabContents[i].classList.remove("active");
-            }
-            
-            // 2. 모든 버튼 색상 초기화
-            var navBtns = document.getElementsByClassName("nav-btn");
-            for (var j = 0; j < navBtns.length; j++) {
-                navBtns[j].classList.remove("active");
-            }
-            
-            // 3. 누른 탭과 버튼만 활성화
-            document.getElementById(tabName).classList.add("active");
-            btnElement.classList.add("active");
-            
-            // 4. 화면 맨 위로 이동
-            window.scrollTo(0,0);
-        }
-    </script>
+    <div class="marquee-section row-1">
+        <div class="marquee-track">
+            <div class="thumbnail-box"></div><div class="thumbnail-box"></div><div class="thumbnail-box"></div>
+            <div class="thumbnail-box"></div><div class="thumbnail-box"></div><div class="thumbnail-box"></div>
+        </div>
+    </div>
+
+    <div class="marquee-section row-2">
+        <div class="marquee-track">
+            <div class="thumbnail-box"></div><div class="thumbnail-box"></div><div class="thumbnail-box"></div>
+            <div class="thumbnail-box"></div><div class="thumbnail-box"></div><div class="thumbnail-box"></div>
+        </div>
+    </div>
+
+    <div class="marquee-section row-3">
+        <div class="marquee-track">
+            <div class="thumbnail-box"></div><div class="thumbnail-box"></div><div class="thumbnail-box"></div>
+            <div class="thumbnail-box"></div><div class="thumbnail-box"></div><div class="thumbnail-box"></div>
+        </div>
+    </div>
+
+    <img src="https://images.unsplash.com/photo-1547430154-2fa189689df9?q=80&w=800&auto=format&fit=crop" alt="Giraffe" class="collage-img img-giraffe">
+    <img src="https://images.unsplash.com/photo-1518001589401-1743b61d1def?q=80&w=800&auto=format&fit=crop" alt="Iguana" class="collage-img img-iguana">
+
 </body>
 </html>
